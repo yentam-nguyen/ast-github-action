@@ -24,20 +24,14 @@ if [ -n "${ADDITIONAL_PARAMS}" ] && [ -z "${SCAN_PARAMS}" ]; then
   eval "scan_arr=(${ADDITIONAL_PARAMS})"
 fi
 
-# Combine global + scan-specific params
-combined_scan_params=("${global_arr[@]}" "${scan_arr[@]}")
-
-# Prepare customized scan params
-customized_scan_params=()
-
 # Prepare Scan Type(s) if provided
 if [ -n "${SCANNER}" ]; then
-  customized_scan_params+=(" --scan-types" "${SCANNER}")
+  scan_arr+=("--scan-types" "${SCANNER}")
 fi
 
 # Prepare Zip Include filter if provided
 if [ -n "${ZIP_INCLUDE}" ]; then
-  customized_scan_params+=(" --file-filter" "'${ZIP_INCLUDE}'")
+  scan_arr+=("--file-filter" "'${ZIP_INCLUDE}'")
 fi
 
 # Prepare Zip Exclude filter if provided
@@ -47,8 +41,11 @@ fi
 if [ -n "${ZIP_EXCLUDE}" ]; then
   modified_exclude="${ZIP_EXCLUDE//,/,!}"
   modified_exclude="!${modified_exclude}"
-  customized_scan_params+=(" --file-filter" "'${modified_exclude}'")
+  scan_arr+=("--file-filter" "'${modified_exclude}'")
 fi
+
+# Combine global + scan-specific params
+combined_scan_params=("${global_arr[@]}" "${scan_arr[@]}")
 
 # Execute Scan
 /app/bin/cx scan create --project-name "${PROJECT_NAME}" -s "${SOURCE_DIR}" --branch "${BRANCH#refs/heads/}" --scan-info-format json --agent "Github Action" "${customized_scan_params[@]}" "${combined_scan_params[@]}" | tee -i "$output_file"
