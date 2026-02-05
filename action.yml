@@ -70,6 +70,10 @@ inputs:
     required: false
     description: 'Provide zip file include in regex format'
     default: ''
+  zip_exclude:
+    required: false
+    description: 'Provide zip file EXCLUDE (NOT SCAN) in regex format'
+    default: ''
   
 outputs: 
   cxcli:
@@ -118,6 +122,7 @@ runs:
     SOURCE_DIR: ${{ inputs.source_dir }}
     SCANNER: ${{ inputs.scanner }}
     ZIP_INCLUDE: ${{ inputs.zip_include }}
+    ZIP_EXCLUDE: ${{ inputs.zip_exclude }}
 branding:
   icon: 'check'
   color: 'green'
