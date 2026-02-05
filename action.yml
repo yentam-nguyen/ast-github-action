@@ -2,7 +2,7 @@ name: 'Checkmarx AST Github Action'
 description: 'Simplify Checkmarx Scanning of source code along with Result consumption leveraging Checkmarx AST solution.'
 author: 'Checkmarx'
 inputs:
-  base_uri:
+  checkmarx_url: #base_uri
     required: true
     description: 'Provide the AST portal URL'
   cx_tenant:
@@ -11,7 +11,7 @@ inputs:
   cx_client_id:
     required: true
     description: 'Client ID for AST portal authentication'
-  cx_client_secret:
+  checkmarx_client_secret: #cx_client_secret
     required: true
     description: 'Secret key for AST portal authentication'
   project_name:
@@ -62,6 +62,7 @@ inputs:
     required: false
     default: .
     description: "Source directory"
+  
 outputs: 
   cxcli:
     description: output from cli
@@ -71,10 +72,10 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - ${{ inputs.base_uri }}
+    - ${{ inputs.checkmarx_url }}
     - ${{ inputs.cx_tenant }}
     - ${{ inputs.cx_client_id }}
-    - ${{ inputs.cx_client_secret }}
+    - ${{ inputs.checkmarx_client_secret }}
     - ${{ inputs.github_token }}
     - ${{ inputs.project_name }}
     - ${{ inputs.additional_params }}
@@ -91,10 +92,10 @@ runs:
   post-entrypoint: '/app/cleanup.sh'
 
   env:
-    CX_BASE_URI: "${{ inputs.base_uri }}"
+    CX_BASE_URI: "${{ inputs.checkmarx_url }}"
     CX_TENANT: ${{ inputs.cx_tenant }}
     CX_CLIENT_ID: ${{ inputs.cx_client_id }}
-    CX_CLIENT_SECRET: ${{ inputs.cx_client_secret }}
+    CX_CLIENT_SECRET: ${{ inputs.checkmarx_client_secret }}
     GITHUB_TOKEN: ${{ inputs.github_token }}
     BRANCH: ${{ inputs.branch }}
     PROJECT_NAME: ${{ inputs.project_name }}
