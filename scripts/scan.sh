@@ -27,6 +27,10 @@ fi
 # Combine global + scan-specific params
 combined_scan_params=("${global_arr[@]}" "${scan_arr[@]}")
 
+if [ -n "${SCANNER}" ]; then
+  combined_scan_params+=("--scan-types" "${SCANNER}")
+fi
+
 # Execute Scan
 /app/bin/cx scan create --project-name "${PROJECT_NAME}" -s "${SOURCE_DIR}" --branch "${BRANCH#refs/heads/}" --scan-info-format json --agent "Github Action" "${combined_scan_params[@]}" | tee -i "$output_file"
 exitCode=${PIPESTATUS[0]}
