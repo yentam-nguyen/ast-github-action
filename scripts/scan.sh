@@ -27,10 +27,12 @@ fi
 # Combine global + scan-specific params
 combined_scan_params=("${global_arr[@]}" "${scan_arr[@]}")
 
+# Prepare Scan Type(s) if provided
 if [ -n "${SCANNER}" ]; then
   combined_scan_params+=("--scan-types" "${SCANNER}")
 fi
 
+# Prepare Zip Include filter if provided
 if [ -n "${ZIP_INCLUDE}" ]; then
   combined_scan_params+=("--file-filter" "'${ZIP_INCLUDE}'")
 fi
