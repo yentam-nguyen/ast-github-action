@@ -74,6 +74,11 @@ inputs:
     required: false
     description: 'Provide zip file EXCLUDE (NOT SCAN) in regex format'
     default: ''
+  ######### Break Glass ##########
+  break_glass_disable_cxflow:
+    required: false
+    description: 'Set the default to true to disable cxflow'
+    default: false
   
 outputs: 
   cxcli:
@@ -123,6 +128,7 @@ runs:
     SCANNER: ${{ inputs.scanner }}
     ZIP_INCLUDE: ${{ inputs.zip_include }}
     ZIP_EXCLUDE: ${{ inputs.zip_exclude }}
+    BREAK_GLASS_DISABLE_CXFLOW: ${{ inputs.break_glass_disable_cxflow }}
 branding:
   icon: 'check'
   color: 'green'
