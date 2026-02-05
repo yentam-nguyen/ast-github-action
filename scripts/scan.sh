@@ -27,14 +27,17 @@ fi
 # Combine global + scan-specific params
 combined_scan_params=("${global_arr[@]}" "${scan_arr[@]}")
 
+# Prepare customized scan params
+customized_scan_params=()
+
 # Prepare Scan Type(s) if provided
 if [ -n "${SCANNER}" ]; then
-  combined_scan_params+=(" --scan-types" "${SCANNER}")
+  customized_scan_params+=(" --scan-types" "${SCANNER}")
 fi
 
 # Prepare Zip Include filter if provided
 if [ -n "${ZIP_INCLUDE}" ]; then
-  combined_scan_params+=(" --file-filter" "'${ZIP_INCLUDE}'")
+  customized_scan_params+=(" --file-filter" "'${ZIP_INCLUDE}'")
 fi
 
 # Prepare Zip Exclude filter if provided
@@ -44,11 +47,11 @@ fi
 if [ -n "${ZIP_EXCLUDE}" ]; then
   modified_exclude="${ZIP_EXCLUDE//,/,!}"
   modified_exclude="!${modified_exclude}"
-  combined_scan_params+=(" --file-filter" "'${modified_exclude}'")
+  customized_scan_params+=(" --file-filter" "'${modified_exclude}'")
 fi
 
 # Execute Scan
-/app/bin/cx scan create --project-name "${PROJECT_NAME}" -s "${SOURCE_DIR}" --branch "${BRANCH#refs/heads/}" --scan-info-format json --agent "Github Action" "${combined_scan_params[@]}" | tee -i "$output_file"
+/app/bin/cx scan create --project-name "${PROJECT_NAME}" -s "${SOURCE_DIR}" --branch "${BRANCH#refs/heads/}" --scan-info-format json --agent "Github Action" "${customized_scan_params[@]}" "${combined_scan_params[@]}" | tee -i "$output_file"
 exitCode=${PIPESTATUS[0]}
 
 # Extract Scan ID
