@@ -31,7 +31,7 @@ fi
 
 # Prepare Zip Include filter if provided
 if [ -n "${ZIP_INCLUDE}" ]; then
-  scan_arr+=("--file-filter" "'${ZIP_INCLUDE}'")
+  scan_arr+=("--file-include" "'${ZIP_INCLUDE}'")
 fi
 
 # Prepare Zip Exclude filter if provided
