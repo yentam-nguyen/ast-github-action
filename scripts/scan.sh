@@ -48,7 +48,7 @@ fi
 combined_scan_params=("${global_arr[@]}" "${scan_arr[@]}")
 
 # Execute Scan
-/app/bin/cx scan create --project-name "${PROJECT_NAME}" -s "${SOURCE_DIR}" --branch "${BRANCH#refs/heads/}" --scan-info-format json --agent "Github Action" "${customized_scan_params[@]}" "${combined_scan_params[@]}" | tee -i "$output_file"
+/app/bin/cx scan create --project-name "${PROJECT_NAME}" -s "${SOURCE_DIR}" --branch "${BRANCH#refs/heads/}" --scan-info-format json --agent "Github Action" --file-filter !*.js "${combined_scan_params[@]}" | tee -i "$output_file"
 exitCode=${PIPESTATUS[0]}
 
 # Extract Scan ID
