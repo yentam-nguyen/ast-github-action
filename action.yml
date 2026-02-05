@@ -66,6 +66,10 @@ inputs:
     required: false
     default: ''
     description: 'Specify the scanner to be used for the scan (sast, sca, etc.)'
+  zip_include:
+    required: false
+    description: 'Provide zip file include in regex format'
+    default: ''
   
 outputs: 
   cxcli:
@@ -113,6 +117,7 @@ runs:
     PR_NUMBER: ${{ inputs.pr_number }}
     SOURCE_DIR: ${{ inputs.source_dir }}
     SCANNER: ${{ inputs.scanner }}
+    ZIP_INCLUDE: ${{ inputs.zip_include }}
 branding:
   icon: 'check'
   color: 'green'
