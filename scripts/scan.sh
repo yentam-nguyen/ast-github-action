@@ -112,23 +112,23 @@ fi
 
 # Parse scan-specific params
 if [ -n "${SCAN_PARAMS}" ]; then
-  # Remove --namespace if present (no direct equivalent in AST CLI)
-  SCAN_PARAMS=$(echo "${SCAN_PARAMS}" | sed 's/--namespace=[^[:space:]]*//g' | sed 's/  */ /g' | sed 's/^ *//;s/ *$//')
+  # # Remove --namespace if present (no direct equivalent in AST CLI)
+  # SCAN_PARAMS=$(echo "${SCAN_PARAMS}" | sed 's/--namespace=[^[:space:]]*//g' | sed 's/  */ /g' | sed 's/^ *//;s/ *$//')
 
-  # Export --repo-name to environment variable for Checkmarx One (AST CLI) to pick up
-  SCAN_PARAMS=$(process_repo_name "${SCAN_PARAMS}")
+  # # Export --repo-name to environment variable for Checkmarx One (AST CLI) to pick up
+  # SCAN_PARAMS=$(process_repo_name "${SCAN_PARAMS}")
 
-  # Convert cx-flow style parameters to Checkmarx One (AST CLI) format
-  SCAN_PARAMS=$(echo "${SCAN_PARAMS}" | sed 's/--cx-flow\.filterSeverity/--filter severity/g')
+  # # Convert cx-flow style parameters to Checkmarx One (AST CLI) format
+  # SCAN_PARAMS=$(echo "${SCAN_PARAMS}" | sed 's/--cx-flow\.filterSeverity/--filter severity/g')
   
-  # Remove --cx-flow.filterCategory if present (no direct equivalent in AST CLI)
-  SCAN_PARAMS=$(echo "${SCAN_PARAMS}" | sed 's/--cx-flow\.filterCategory[^ ]*//g' | sed 's/  */ /g' | sed 's/^ *//;s/ *$//')
+  # # Remove --cx-flow.filterCategory if present (no direct equivalent in AST CLI)
+  # SCAN_PARAMS=$(echo "${SCAN_PARAMS}" | sed 's/--cx-flow\.filterCategory[^ ]*//g' | sed 's/  */ /g' | sed 's/^ *//;s/ *$//')
 
-  # Convert --merge-id to custom tag format
-  SCAN_PARAMS=$(process_merge_id "${SCAN_PARAMS}")
+  # # Convert --merge-id to custom tag format
+  # SCAN_PARAMS=$(process_merge_id "${SCAN_PARAMS}")
   
-  # Convert --severity parameter to --threshold format
-  SCAN_PARAMS=$(process_severity "${SCAN_PARAMS}")
+  # # Convert --severity parameter to --threshold format
+  # SCAN_PARAMS=$(process_severity "${SCAN_PARAMS}")
 
   # Remove deprecated checkmarx.* parameters
   SCAN_PARAMS=$(remove_checkmarx_params "${SCAN_PARAMS}")
