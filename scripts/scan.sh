@@ -112,7 +112,7 @@ if [ -n "${SCAN_PARAMS}" ]; then
   SCAN_PARAMS=$(process_repo_name "${SCAN_PARAMS}")
 
   # Convert cx-flow style parameters to Checkmarx One (AST CLI) format
-  SCAN_PARAMS=$(echo "${SCAN_PARAMS}" | sed 's/--cx-flow\.filterSeverity/--filter=severity/g')
+  SCAN_PARAMS=$(echo "${SCAN_PARAMS}" | sed 's/--cx-flow\.filterSeverity/--filter severity=High/g')
   
   # Remove --cx-flow.filterCategory if present (no direct equivalent in AST CLI)
   SCAN_PARAMS=$(echo "${SCAN_PARAMS}" | sed 's/--cx-flow\.filterCategory[^ ]*//g' | sed 's/  */ /g' | sed 's/^ *//;s/ *$//')
