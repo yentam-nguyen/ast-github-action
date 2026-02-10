@@ -17,6 +17,8 @@ process_repo_name() {
     # Remove --repo-name from params to avoid duplication
     params=$(echo "${params}" | sed -E 's/--repo-name=[^[:space:]]+//')
     params=$(echo "${params}" | sed 's/  */ /g' | sed 's/^ *//;s/ *$//')
+    # Add log for debugging
+    echo "⚠️  Exported CX_REPO_NAME=${CX_REPO_NAME}"
   fi
   
   echo "${params}"
@@ -60,6 +62,8 @@ process_severity() {
       params=$(echo "${params}" | sed -E 's/--severity=[^[:space:]]+//')
       params="${params} ${threshold}"
       params=$(echo "${params}" | sed 's/  */ /g' | sed 's/^ *//;s/ *$//')
+      # Add log for debugging
+      echo "⚠️  Converted --severity=${severity_value} to ${threshold}"
     fi
   fi
   
@@ -76,6 +80,8 @@ process_merge_id() {
     merge_id_value="${merge_id_value//\"/}"
     # Replace --merge-id with --tag=merge:<value>
     params=$(echo "${params}" | sed -E 's/--merge-id=[^[:space:]]+/--tag=merge-id:'"${merge_id_value}"'/')
+    # Add log for debugging
+    echo "⚠️  Converted --merge-id=${merge_id_value} to --tag=merge-id:${merge_id_value}"
   fi
   
   echo "${params}"
@@ -88,6 +94,8 @@ remove_checkmarx_params() {
   if [[ "${params}" =~ checkmarx\. ]]; then
     echo "⚠️  Warning: Parameters starting with 'checkmarx.' are deprecated in Checkmarx One (AST CLI) and will be removed."
     params=$(echo "${params}" | sed -E 's/--checkmarx\.[^[:space:]]*//g' | sed 's/  */ /g' | sed 's/^ *//;s/ *$//')
+    # Add log for debugging
+    echo "⚠️  Removed deprecated checkmarx.* parameters."
   fi
   
   echo "${params}"
