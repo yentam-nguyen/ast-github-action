@@ -71,23 +71,20 @@ process_severity() {
 }
 
 # Function to extract --merge-id value and remove it from params
-# Sets global variable MERGE_ID_VALUE
+# Modifies SCAN_PARAMS directly and sets global variable MERGE_ID_VALUE
 process_merge_id() {
-  local params="$1"
   MERGE_ID_VALUE=""
   
-  if [[ "${params}" =~ --merge-id=([^[:space:]]+) ]]; then
+  if [[ "${SCAN_PARAMS}" =~ --merge-id=([^[:space:]]+) ]]; then
     MERGE_ID_VALUE="${BASH_REMATCH[1]}"
     # Remove quotes if present
     MERGE_ID_VALUE="${MERGE_ID_VALUE//\"/}"
     # Remove --merge-id from params
-    params=$(echo "${params}" | sed -E 's/--merge-id=[^[:space:]]+//')
-    params=$(echo "${params}" | sed 's/  */ /g' | sed 's/^ *//;s/ *$//')
+    SCAN_PARAMS=$(echo "${SCAN_PARAMS}" | sed -E 's/--merge-id=[^[:space:]]+//')
+    SCAN_PARAMS=$(echo "${SCAN_PARAMS}" | sed 's/  */ /g' | sed 's/^ *//;s/ *$//')
     # Add log for debugging
     echo "⚠️  Extracted --merge-id=${MERGE_ID_VALUE}" >&2
   fi
-  
-  echo "${params}"
 }
 
 # Function to remove deprecated checkmarx.* parameters
@@ -127,8 +124,8 @@ if [ -n "${SCAN_PARAMS}" ]; then
   # # Remove --cx-flow.filterCategory if present (no direct equivalent in AST CLI)
   # SCAN_PARAMS=$(echo "${SCAN_PARAMS}" | sed 's/--cx-flow\.filterCategory[^ ]*//g' | sed 's/  */ /g' | sed 's/^ *//;s/ *$//')
 
-  # Convert --merge-id to custom tag format
-  SCAN_PARAMS=$(process_merge_id "${SCAN_PARAMS}")
+  # Extract --merge-id and remove it from SCAN_PARAMS
+  process_merge_id
   
   # # Convert --severity parameter to --threshold format
   # SCAN_PARAMS=$(process_severity "${SCAN_PARAMS}")
