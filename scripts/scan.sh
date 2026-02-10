@@ -44,16 +44,16 @@ process_severity() {
     local threshold=""
     case "${severity_value}" in
       "High")
-        threshold="--threshold \"sast-medium=0;sast-low=0\""
+        threshold="--threshold sast-medium=0;sast-low=0"
         ;;
       "High,Medium"|"High, Medium")
-        threshold="--threshold \"sast-low=0\""
+        threshold="--threshold sast-low=0"
         ;;
       "Medium")
-        threshold="--threshold \"sast-high=0;sast-low=0\""
+        threshold="--threshold sast-high=0;sast-low=0"
         ;;
       "Medium,Low"|"Medium, Low")
-        threshold="--threshold \"sast-high=0\""
+        threshold="--threshold sast-high=0"
         ;;
     esac
     
@@ -146,6 +146,9 @@ fi
 
 # Combine global + scan-specific params
 combined_scan_params=("${global_arr[@]}" "${scan_arr[@]}")
+
+# Add log for debugging
+echo "⚠️  Final combined scan parameters: ${combined_scan_params[*]}"
 
 # Prepare customized scan options
 customized_scan_params=()
