@@ -82,6 +82,10 @@ inputs:
     required: false
     description: 'Format for the output. One of [json json-v2 summaryHTML sarif sbom pdf markdown gl-sast gl-sca summaryConsole] (default "summaryConsole")'
     default: ''
+  incremental:
+    required: false
+    description: 'Trigger scan as incremental? (SAST)'
+    default: false
   ######### Break Glass ##########
   break_glass_disable_cxflow:
     required: false
@@ -138,6 +142,7 @@ runs:
     ZIP_EXCLUDE: ${{ inputs.zip_exclude }}
     APP_ID: ${{ inputs.app }}
     BUG_TRACKER_FORMAT: ${{ inputs.bug_tracker }}
+    INCREMENTAL_SCAN: ${{ inputs.incremental }}
     BREAK_GLASS_DISABLE_CXFLOW: ${{ inputs.break_glass_disable_cxflow }}
 branding:
   icon: 'check'

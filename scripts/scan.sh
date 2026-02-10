@@ -192,6 +192,10 @@ if [ -n "${BUG_TRACKER_FORMAT}" ]; then
   customized_scan_params+=("--report-format" "${BUG_TRACKER_FORMAT}")
 fi
 
+if [ "${INCREMENTAL_SCAN}" = "true" ] || [ "${INCREMENTAL_SCAN}" = "True" ]; then
+  customized_scan_params+=("--sast-incremental")
+fi
+
 # Execute Scan
 /app/bin/cx scan create --project-name "${PROJECT_NAME}" -s "${SOURCE_DIR}" --branch "${BRANCH#refs/heads/}" --scan-info-format json --agent "Github Action" "${customized_scan_params[@]}" "${combined_scan_params[@]}" | tee -i "$output_file"
 exitCode=${PIPESTATUS[0]}
