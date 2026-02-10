@@ -79,7 +79,7 @@ process_merge_id() {
     # Remove quotes if present
     merge_id_value="${merge_id_value//\"/}"
     # Replace --merge-id with --tag=merge:<value>
-    params=$(echo "${params}" | sed -E 's/--merge-id=[^[:space:]]+/--tag=merge-id:'"${merge_id_value}"'/')
+    params=$(echo "${params}" | sed -E 's/--merge-id=[^[:space:]]+/--tags=merge-id:'"${merge_id_value}"'/')
     # Add log for debugging
     echo "⚠️  Converted --merge-id=${merge_id_value} to --tag=merge-id:${merge_id_value}" >&2
   fi
@@ -175,7 +175,7 @@ fi
 
 # Prepare Application ID if provided
 if [ -n "${APP_ID}" ]; then
-  customized_scan_params+=("--tag=app:${APP_ID}")
+  customized_scan_params+=("--tags=app:${APP_ID}")
 fi
 
 # Prepare Bug Tracker Format if provided
