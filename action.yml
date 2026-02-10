@@ -30,7 +30,7 @@ inputs:
     required: false
     default: ''
     description: 'Global parameters applied to all cx commands'
-  scan_params:
+  params: #scan_params
     required: false
     default: ''
     description: 'Additional parameters for cx scan command only'
@@ -65,7 +65,7 @@ inputs:
   scanner:
     required: false
     default: ''
-    description: 'Specify the scanner to be used for the scan (sast, sca, etc.)'
+    description: 'Specify the scanner to be used for the scan (ast,iac-security,sca,api-security)'
   zip_include:
     required: false
     description: 'Provide zip file include in regex format'
@@ -73,6 +73,14 @@ inputs:
   zip_exclude:
     required: false
     description: 'Provide zip file EXCLUDE (NOT SCAN) in regex format'
+    default: ''
+  app:
+    required: false
+    description: 'Unique Application Identifier used by downstream bug trackers (i.e. Jira)'
+    default: ''
+  bug_tracker:
+    required: false
+    description: 'Format for the output. One of [json json-v2 summaryHTML sarif sbom pdf markdown gl-sast gl-sca summaryConsole] (default "summaryConsole")'
     default: ''
   ######### Break Glass ##########
   break_glass_disable_cxflow:
@@ -97,7 +105,7 @@ runs:
     - ${{ inputs.project }}
     - ${{ inputs.additional_params }}
     - ${{ inputs.global_params }}
-    - ${{ inputs.scan_params }}
+    - ${{ inputs.params }}
     - ${{ inputs.utils_params }}
     - ${{ inputs.results_params }}
     - ${{ inputs.repo_name }}
@@ -118,7 +126,7 @@ runs:
     PROJECT_NAME: ${{ inputs.project }}
     ADDITIONAL_PARAMS: ${{ inputs.additional_params }}
     GLOBAL_PARAMS: ${{ inputs.global_params }}
-    SCAN_PARAMS: ${{ inputs.scan_params }}
+    SCAN_PARAMS: ${{ inputs.params }}
     UTILS_PARAMS: ${{ inputs.utils_params }}
     RESULTS_PARAMS: ${{ inputs.results_params }}
     REPO_NAME: ${{ inputs.repo_name }}
@@ -128,6 +136,8 @@ runs:
     SCANNER: ${{ inputs.scanner }}
     ZIP_INCLUDE: ${{ inputs.zip_include }}
     ZIP_EXCLUDE: ${{ inputs.zip_exclude }}
+    APP_ID: ${{ inputs.app }}
+    BUG_TRACKER_FORMAT: ${{ inputs.bug_tracker }}
     BREAK_GLASS_DISABLE_CXFLOW: ${{ inputs.break_glass_disable_cxflow }}
 branding:
   icon: 'check'
