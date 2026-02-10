@@ -70,18 +70,21 @@ process_severity() {
   echo "${params}"
 }
 
-# Function to convert --merge-id to custom tag format
+# Function to extract --merge-id value and remove it from params
+# Sets global variable MERGE_ID_VALUE
 process_merge_id() {
   local params="$1"
+  MERGE_ID_VALUE=""
   
   if [[ "${params}" =~ --merge-id=([^[:space:]]+) ]]; then
-    local merge_id_value="${BASH_REMATCH[1]}"
+    MERGE_ID_VALUE="${BASH_REMATCH[1]}"
     # Remove quotes if present
-    merge_id_value="${merge_id_value//\"/}"
-    # Replace --merge-id with --tag=merge:<value>
-    params=$(echo "${params}" | sed -E 's/--merge-id=[^[:space:]]+/--tags=merge-id:'"${merge_id_value}"'/')
+    MERGE_ID_VALUE="${MERGE_ID_VALUE//\"/}"
+    # Remove --merge-id from params
+    params=$(echo "${params}" | sed -E 's/--merge-id=[^[:space:]]+//')
+    params=$(echo "${params}" | sed 's/  */ /g' | sed 's/^ *//;s/ *$//')
     # Add log for debugging
-    echo "⚠️  Converted --merge-id=${merge_id_value} to --tag=merge-id:${merge_id_value}" >&2
+    echo "⚠️  Extracted --merge-id=${MERGE_ID_VALUE}" >&2
   fi
   
   echo "${params}"
@@ -173,9 +176,25 @@ if [ -n "${ZIP_EXCLUDE}" ]; then
   customized_scan_params+=("--file-filter" "${modified_exclude}")
 fi
 
-# Prepare Application ID if provided
+# Collect all tags into tag_list
+tag_list=()
+
+# Add merge-id tag if present
+if [ -n "${MERGE_ID_VALUE}" ]; then
+  tag_list+=("merge-id:${MERGE_ID_VALUE}")
+fi
+
+# Add Application ID tag if provided
 if [ -n "${APP_ID}" ]; then
-  customized_scan_params+=("--tags=app:${APP_ID}")
+  tag_list+=("app:${APP_ID}")
+fi
+
+# Combine all tags into final --tags parameter if there are any tags
+if [ ${#tag_list[@]} -gt 0 ]; then
+  # Join array elements with comma
+  tags_value=$(IFS=,; echo "${tag_list[*]}")
+  customized_scan_params+=("--tags" "${tags_value}")
+  echo "⚠️  Combined tags: ${tags_value}" >&2
 fi
 
 # Prepare Bug Tracker Format if provided
