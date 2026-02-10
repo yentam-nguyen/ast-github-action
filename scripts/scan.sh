@@ -124,8 +124,8 @@ if [ -n "${SCAN_PARAMS}" ]; then
   # # Remove --cx-flow.filterCategory if present (no direct equivalent in AST CLI)
   # SCAN_PARAMS=$(echo "${SCAN_PARAMS}" | sed 's/--cx-flow\.filterCategory[^ ]*//g' | sed 's/  */ /g' | sed 's/^ *//;s/ *$//')
 
-  # # Convert --merge-id to custom tag format
-  # SCAN_PARAMS=$(process_merge_id "${SCAN_PARAMS}")
+  # Convert --merge-id to custom tag format
+  SCAN_PARAMS=$(process_merge_id "${SCAN_PARAMS}")
   
   # # Convert --severity parameter to --threshold format
   # SCAN_PARAMS=$(process_severity "${SCAN_PARAMS}")
