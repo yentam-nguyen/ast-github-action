@@ -90,6 +90,10 @@ inputs:
     required: false
     description: 'Set the vulnerability threshold for the scan. If the threshold is exceeded, the scan will be marked as failed. Format: "sast-high=1;sast-medium=10;sca-high=5;iac-security-low=10"'
     default: ''
+  debug:
+    required: false
+    description: 'Enable debug mode'
+    default: false
   ######### Break Glass ##########
   break_glass_disable_cxflow:
     required: false
@@ -148,6 +152,7 @@ runs:
     BUG_TRACKER_FORMAT: ${{ inputs.bug_tracker }}
     INCREMENTAL_SCAN: ${{ inputs.incremental }}
     THRESHOLD: ${{ inputs.threshold }}
+    DEBUG: ${{ inputs.debug }}
     BREAK_GLASS_DISABLE_CXFLOW: ${{ inputs.break_glass_disable_cxflow }}
 branding:
   icon: 'check'

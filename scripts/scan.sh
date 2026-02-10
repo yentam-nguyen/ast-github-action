@@ -17,8 +17,6 @@ process_repo_name() {
     # Remove --repo-name from params to avoid duplication
     params=$(echo "${params}" | sed -E 's/--repo-name=[^[:space:]]+//')
     params=$(echo "${params}" | sed 's/  */ /g' | sed 's/^ *//;s/ *$//')
-    # Add log for debugging
-    echo "⚠️  Exported CX_REPO_NAME=${CX_REPO_NAME}" >&2
   fi
   
   echo "${params}"
@@ -43,9 +41,6 @@ process_cx_flow_severity() {
     # Add --filter severity=<value>
     SCAN_PARAMS="${SCAN_PARAMS} --filter severity=${severity_value}"
     SCAN_PARAMS=$(echo "${SCAN_PARAMS}" | sed 's/  */ /g' | sed 's/^ *//;s/ *$//')
-    
-    # Add log for debugging
-    echo "⚠️  Converted cx-flow severity parameters to --filter severity=${severity_value}" >&2
   fi
 }
 
@@ -61,8 +56,6 @@ process_merge_id() {
     # Remove --merge-id from params
     SCAN_PARAMS=$(echo "${SCAN_PARAMS}" | sed -E 's/--merge-id=[^[:space:]]+//')
     SCAN_PARAMS=$(echo "${SCAN_PARAMS}" | sed 's/  */ /g' | sed 's/^ *//;s/ *$//')
-    # Add log for debugging
-    echo "⚠️  Extracted --merge-id=${MERGE_ID_VALUE}" >&2
   fi
 }
 
@@ -73,8 +66,6 @@ remove_checkmarx_params() {
   if [[ "${params}" =~ checkmarx\. ]]; then
     echo "⚠️  Warning: Parameters starting with 'checkmarx.' are deprecated in Checkmarx One (AST CLI) and will be removed." >&2
     params=$(echo "${params}" | sed -E 's/--checkmarx\.[^[:space:]]*//g' | sed 's/  */ /g' | sed 's/^ *//;s/ *$//')
-    # Add log for debugging
-    echo "⚠️  Removed deprecated checkmarx.* parameters." >&2
   fi
   
   echo "${params}"
@@ -120,9 +111,6 @@ fi
 # Combine global + scan-specific params
 combined_scan_params=("${global_arr[@]}" "${scan_arr[@]}")
 
-# Add log for debugging
-echo "⚠️  Final combined scan parameters: ${combined_scan_params[*]}" >&2
-
 # Prepare customized scan options
 customized_scan_params=()
 
@@ -164,7 +152,6 @@ if [ ${#tag_list[@]} -gt 0 ]; then
   # Join array elements with comma
   tags_value=$(IFS=,; echo "${tag_list[*]}")
   customized_scan_params+=("--tags" "${tags_value}")
-  echo "⚠️  Combined tags: ${tags_value}" >&2
 fi
 
 # Prepare Bug Tracker Format if provided
@@ -179,6 +166,11 @@ fi
 # Prepare Threshold if provided
 if [ -n "${THRESHOLD}" ]; then
   customized_scan_params+=("--threshold" "${THRESHOLD}")
+fi
+
+# Enable debug mode if specified
+if [ "${DEBUG}" = "true" ] || [ "${DEBUG}" = "True" ]; then
+  customized_scan_params+=("--debug")
 fi
 
 # Execute Scan
