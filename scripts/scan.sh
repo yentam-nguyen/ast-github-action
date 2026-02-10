@@ -24,42 +24,28 @@ process_repo_name() {
   echo "${params}"
 }
 
-# Function to convert --severity parameter to --threshold format
-# This is a simplified mapping and may need to be adjusted based on specific requirements
-# if --severity=High -> --threshold "sast-high=1"
-# if --severity=Medium -> --threshold "sast-medium=1"
-# if --severity=Low -> --threshold "sast-low=1"
+# Function to convert cx-flow parameters with --severity to --filter format
+# if --cx-flow.filterSeverity --cx-flow.filterCategory --severity=High -> --filter severity=High
 # Modifies SCAN_PARAMS directly
-process_severity() {
+process_cx_flow_severity() {
   if [[ "${SCAN_PARAMS}" =~ --severity=([^[:space:]]+) ]]; then
-    # Users are recommended to use the new --threshold parameter directly
-    echo "⚠️  Warning: The --severity parameter is deprecated. Please use --threshold which provides more granular control instead." >&2
     local severity_value="${BASH_REMATCH[1]}"
     # Remove quotes if present
     severity_value="${severity_value//\"/}"
     
-    # Determine threshold based on severity value
-    local threshold=""
-    case "${severity_value}" in
-      "High")
-        threshold="--threshold 'sast-high=1'"
-        ;;
-      "Medium")
-        threshold="--threshold 'sast-medium=1'"
-        ;;
-      "Low")
-        threshold="--threshold 'sast-low=1'"
-        ;;
-    esac
+    # Remove --severity parameter
+    SCAN_PARAMS=$(echo "${SCAN_PARAMS}" | sed -E 's/--severity=[^[:space:]]+//')
+    # Remove --cx-flow.filterSeverity if present
+    SCAN_PARAMS=$(echo "${SCAN_PARAMS}" | sed 's/--cx-flow\.filterSeverity//g')
+    # Remove --cx-flow.filterCategory if present
+    SCAN_PARAMS=$(echo "${SCAN_PARAMS}" | sed 's/--cx-flow\.filterCategory[^ ]*//g')
     
-    # Replace --severity with --threshold in SCAN_PARAMS
-    if [ -n "${threshold}" ]; then
-      SCAN_PARAMS=$(echo "${SCAN_PARAMS}" | sed -E 's/--severity=[^[:space:]]+//')
-      SCAN_PARAMS="${SCAN_PARAMS} ${threshold}"
-      SCAN_PARAMS=$(echo "${SCAN_PARAMS}" | sed 's/  */ /g' | sed 's/^ *//;s/ *$//')
-      # Add log for debugging
-      echo "⚠️  Converted --severity=${severity_value} to ${threshold}" >&2
-    fi
+    # Add --filter severity=<value>
+    SCAN_PARAMS="${SCAN_PARAMS} --filter severity=${severity_value}"
+    SCAN_PARAMS=$(echo "${SCAN_PARAMS}" | sed 's/  */ /g' | sed 's/^ *//;s/ *$//')
+    
+    # Add log for debugging
+    echo "⚠️  Converted cx-flow severity parameters to --filter severity=${severity_value}" >&2
   fi
 }
 
@@ -111,17 +97,11 @@ if [ -n "${SCAN_PARAMS}" ]; then
   # Export --repo-name to environment variable for Checkmarx One (AST CLI) to pick up
   SCAN_PARAMS=$(process_repo_name "${SCAN_PARAMS}")
 
-  # Convert cx-flow style parameters to Checkmarx One (AST CLI) format
-  SCAN_PARAMS=$(echo "${SCAN_PARAMS}" | sed 's/--cx-flow\.filterSeverity/--filter severity=High/g')
-  
-  # Remove --cx-flow.filterCategory if present (no direct equivalent in AST CLI)
-  SCAN_PARAMS=$(echo "${SCAN_PARAMS}" | sed 's/--cx-flow\.filterCategory[^ ]*//g' | sed 's/  */ /g' | sed 's/^ *//;s/ *$//')
-
   # Extract --merge-id and remove it from SCAN_PARAMS
   process_merge_id
   
-  # Convert --severity parameter to --threshold format
-  process_severity
+  # Convert cx-flow style parameters with --severity to --filter severity=<value>
+  process_cx_flow_severity
 
   # Remove deprecated checkmarx.* parameters
   SCAN_PARAMS=$(remove_checkmarx_params "${SCAN_PARAMS}")
@@ -194,6 +174,11 @@ fi
 
 if [ "${INCREMENTAL_SCAN}" = "true" ] || [ "${INCREMENTAL_SCAN}" = "True" ]; then
   customized_scan_params+=("--sast-incremental")
+fi
+
+# Prepare Threshold if provided
+if [ -n "${THRESHOLD}" ]; then
+  customized_scan_params+=("--threshold" "${THRESHOLD}")
 fi
 
 # Execute Scan

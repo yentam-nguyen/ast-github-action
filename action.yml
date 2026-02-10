@@ -86,6 +86,10 @@ inputs:
     required: false
     description: 'Trigger scan as incremental? (SAST)'
     default: false
+  threshold:
+    required: false
+    description: 'Set the vulnerability threshold for the scan. If the threshold is exceeded, the scan will be marked as failed. Format: "sast-high=1;sast-medium=10;sca-high=5;iac-security-low=10"'
+    default: ''
   ######### Break Glass ##########
   break_glass_disable_cxflow:
     required: false
@@ -143,6 +147,7 @@ runs:
     APP_ID: ${{ inputs.app }}
     BUG_TRACKER_FORMAT: ${{ inputs.bug_tracker }}
     INCREMENTAL_SCAN: ${{ inputs.incremental }}
+    THRESHOLD: ${{ inputs.threshold }}
     BREAK_GLASS_DISABLE_CXFLOW: ${{ inputs.break_glass_disable_cxflow }}
 branding:
   icon: 'check'
