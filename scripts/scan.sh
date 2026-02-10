@@ -30,10 +30,9 @@ process_repo_name() {
 # if --severity=High,Medium -> --threshold "sast-low=0"
 # if --severity=Medium -> --threshold "sast-high=0;sast-low=0"
 # if --severity=Medium,Low -> --threshold "sast-high=0"
+# Modifies SCAN_PARAMS directly
 process_severity() {
-  local params="$1"
-  
-  if [[ "${params}" =~ --severity=([^[:space:]]+) ]]; then
+  if [[ "${SCAN_PARAMS}" =~ --severity=([^[:space:]]+) ]]; then
     # Users are recommended to use the new --threshold parameter directly
     echo "⚠️  Warning: The --severity parameter is deprecated. Please use --threshold which provides more granular control instead." >&2
     local severity_value="${BASH_REMATCH[1]}"
@@ -44,30 +43,28 @@ process_severity() {
     local threshold=""
     case "${severity_value}" in
       "High")
-        threshold="--threshold sast-medium=0;sast-low=0"
+        threshold="--threshold 'sast-medium=0;sast-low=0'"
         ;;
       "High,Medium"|"High, Medium")
-        threshold="--threshold sast-low=0"
+        threshold="--threshold 'sast-low=0'"
         ;;
       "Medium")
-        threshold="--threshold sast-high=0;sast-low=0"
+        threshold="--threshold 'sast-high=0;sast-low=0'"
         ;;
       "Medium,Low"|"Medium, Low")
-        threshold="--threshold sast-high=0"
+        threshold="--threshold 'sast-high=0'"
         ;;
     esac
     
     # Replace --severity with --threshold in SCAN_PARAMS
     if [ -n "${threshold}" ]; then
-      params=$(echo "${params}" | sed -E 's/--severity=[^[:space:]]+//')
-      params="${params} ${threshold}"
-      params=$(echo "${params}" | sed 's/  */ /g' | sed 's/^ *//;s/ *$//')
+      SCAN_PARAMS=$(echo "${SCAN_PARAMS}" | sed -E 's/--severity=[^[:space:]]+//')
+      SCAN_PARAMS="${SCAN_PARAMS} ${threshold}"
+      SCAN_PARAMS=$(echo "${SCAN_PARAMS}" | sed 's/  */ /g' | sed 's/^ *//;s/ *$//')
       # Add log for debugging
       echo "⚠️  Converted --severity=${severity_value} to ${threshold}" >&2
     fi
   fi
-  
-  echo "${params}"
 }
 
 # Function to extract --merge-id value and remove it from params
@@ -128,7 +125,7 @@ if [ -n "${SCAN_PARAMS}" ]; then
   process_merge_id
   
   # Convert --severity parameter to --threshold format
-  SCAN_PARAMS=$(process_severity "${SCAN_PARAMS}")
+  process_severity
 
   # Remove deprecated checkmarx.* parameters
   SCAN_PARAMS=$(remove_checkmarx_params "${SCAN_PARAMS}")
