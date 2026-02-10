@@ -9,7 +9,7 @@ process_repo_name() {
   local params="$1"
   
   if [[ "${params}" =~ --repo-name=([^[:space:]]+) ]]; then
-    echo "⚠️  Warning: The --repo-name parameter is deprecated. Please use the 'repo_name' input instead."
+    echo "⚠️  Warning: The --repo-name parameter is deprecated. Please use the 'repo_name' input instead." >&2
     local repo_name_value="${BASH_REMATCH[1]}"
     # Remove quotes if present
     repo_name_value="${repo_name_value//\"/}"
@@ -18,7 +18,7 @@ process_repo_name() {
     params=$(echo "${params}" | sed -E 's/--repo-name=[^[:space:]]+//')
     params=$(echo "${params}" | sed 's/  */ /g' | sed 's/^ *//;s/ *$//')
     # Add log for debugging
-    echo "⚠️  Exported CX_REPO_NAME=${CX_REPO_NAME}"
+    echo "⚠️  Exported CX_REPO_NAME=${CX_REPO_NAME}" >&2
   fi
   
   echo "${params}"
@@ -35,7 +35,7 @@ process_severity() {
   
   if [[ "${params}" =~ --severity=([^[:space:]]+) ]]; then
     # Users are recommended to use the new --threshold parameter directly
-    echo "⚠️  Warning: The --severity parameter is deprecated. Please use --threshold which provides more granular control instead."
+    echo "⚠️  Warning: The --severity parameter is deprecated. Please use --threshold which provides more granular control instead." >&2
     local severity_value="${BASH_REMATCH[1]}"
     # Remove quotes if present
     severity_value="${severity_value//\"/}"
@@ -63,7 +63,7 @@ process_severity() {
       params="${params} ${threshold}"
       params=$(echo "${params}" | sed 's/  */ /g' | sed 's/^ *//;s/ *$//')
       # Add log for debugging
-      echo "⚠️  Converted --severity=${severity_value} to ${threshold}"
+      echo "⚠️  Converted --severity=${severity_value} to ${threshold}" >&2
     fi
   fi
   
@@ -81,7 +81,7 @@ process_merge_id() {
     # Replace --merge-id with --tag=merge:<value>
     params=$(echo "${params}" | sed -E 's/--merge-id=[^[:space:]]+/--tag=merge-id:'"${merge_id_value}"'/')
     # Add log for debugging
-    echo "⚠️  Converted --merge-id=${merge_id_value} to --tag=merge-id:${merge_id_value}"
+    echo "⚠️  Converted --merge-id=${merge_id_value} to --tag=merge-id:${merge_id_value}" >&2
   fi
   
   echo "${params}"
@@ -92,10 +92,10 @@ remove_checkmarx_params() {
   local params="$1"
   
   if [[ "${params}" =~ checkmarx\. ]]; then
-    echo "⚠️  Warning: Parameters starting with 'checkmarx.' are deprecated in Checkmarx One (AST CLI) and will be removed."
+    echo "⚠️  Warning: Parameters starting with 'checkmarx.' are deprecated in Checkmarx One (AST CLI) and will be removed." >&2
     params=$(echo "${params}" | sed -E 's/--checkmarx\.[^[:space:]]*//g' | sed 's/  */ /g' | sed 's/^ *//;s/ *$//')
     # Add log for debugging
-    echo "⚠️  Removed deprecated checkmarx.* parameters."
+    echo "⚠️  Removed deprecated checkmarx.* parameters." >&2
   fi
   
   echo "${params}"
@@ -140,7 +140,7 @@ fi
 
 # Backward compatibility: Support ADDITIONAL_PARAMS
 if [ -n "${ADDITIONAL_PARAMS}" ] && [ -z "${SCAN_PARAMS}" ]; then
-  echo "⚠️  ADDITIONAL_PARAMS is deprecated. Please use SCAN_PARAMS instead."
+  echo "⚠️  ADDITIONAL_PARAMS is deprecated. Please use SCAN_PARAMS instead." >&2
   eval "scan_arr=(${ADDITIONAL_PARAMS})"
 fi
 
@@ -148,7 +148,7 @@ fi
 combined_scan_params=("${global_arr[@]}" "${scan_arr[@]}")
 
 # Add log for debugging
-echo "⚠️  Final combined scan parameters: ${combined_scan_params[*]}"
+echo "⚠️  Final combined scan parameters: ${combined_scan_params[*]}" >&2
 
 # Prepare customized scan options
 customized_scan_params=()
