@@ -26,10 +26,9 @@ process_repo_name() {
 
 # Function to convert --severity parameter to --threshold format
 # This is a simplified mapping and may need to be adjusted based on specific requirements
-# if --severity=High -> --threshold "sast-medium=0;sast-low=0"
-# if --severity=High,Medium -> --threshold "sast-low=0"
-# if --severity=Medium -> --threshold "sast-high=0;sast-low=0"
-# if --severity=Medium,Low -> --threshold "sast-high=0"
+# if --severity=High -> --threshold "sast-high=1"
+# if --severity=Medium -> --threshold "sast-medium=1"
+# if --severity=Low -> --threshold "sast-low=1"
 # Modifies SCAN_PARAMS directly
 process_severity() {
   if [[ "${SCAN_PARAMS}" =~ --severity=([^[:space:]]+) ]]; then
@@ -43,16 +42,13 @@ process_severity() {
     local threshold=""
     case "${severity_value}" in
       "High")
-        threshold="--threshold 'sast-medium=0;sast-low=0'"
-        ;;
-      "High,Medium"|"High, Medium")
-        threshold="--threshold 'sast-low=0'"
+        threshold="--threshold 'sast-high=1'"
         ;;
       "Medium")
-        threshold="--threshold 'sast-high=0;sast-low=0'"
+        threshold="--threshold 'sast-medium=1'"
         ;;
-      "Medium,Low"|"Medium, Low")
-        threshold="--threshold 'sast-high=0'"
+      "Low")
+        threshold="--threshold 'sast-low=1'"
         ;;
     esac
     
