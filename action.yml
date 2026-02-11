@@ -62,8 +62,8 @@ inputs:
     description: "Source directory"
   scanner:
     required: false
-    default: ''
-    description: 'Specify the scanner to be used for the scan (ast,iac-security,sca,api-security)'
+    description: 'Specify the scanner to be used for the scan (sast,iac-security,sca,api-security)'
+    default: 'sast' # Add default scanner to support current cxflow users
   zip_include:
     required: false
     description: 'Provide zip file include in regex format'
