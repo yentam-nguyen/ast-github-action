@@ -72,10 +72,6 @@ inputs:
     required: false
     description: 'Provide zip file EXCLUDE (NOT SCAN) in regex format'
     default: ''
-  app:
-    required: false
-    description: 'Unique Application Identifier used by downstream bug trackers (i.e. Jira)'
-    default: ''
   bug_tracker:
     required: false
     description: 'Format for the output. One of [json json-v2 summaryHTML sarif sbom pdf markdown gl-sast gl-sca summaryConsole] (default "summaryConsole")'
@@ -96,6 +92,15 @@ inputs:
     required: false
     description: 'Enable debug mode'
     default: false
+  ### Parameters for tagging the scan ###
+  app:
+    required: false
+    description: 'Unique Application Identifier used by downstream bug trackers (i.e. Jira)'
+    default: ''
+  team:
+    required: false
+    description: 'Team name to associate with the scan'
+    default: ''
   ### DEPRECATED INPUTS - TO BE REMOVED IN FUTURE RELEASES ###
   checkmarx_username:
     required: false
@@ -107,7 +112,7 @@ inputs:
     required: false
     default: ''
     description: '[DEPRECATED] Use scan_params instead. Additional parameters for AST scan'
-  ######### Break Glass ##########
+  ######### BREAK GLASS ##########
   break_glass_disable_cxflow:
     required: false
     description: 'Set the default to true to disable cxflow'
@@ -162,6 +167,7 @@ runs:
     ZIP_INCLUDE: ${{ inputs.zip_include }}
     ZIP_EXCLUDE: ${{ inputs.zip_exclude }}
     APP_ID: ${{ inputs.app }}
+    TEAM_NAME: ${{ inputs.team }}
     BUG_TRACKER_FORMAT: ${{ inputs.bug_tracker }}
     BREAK_BUILD: ${{ inputs.break_build }}
     INCREMENTAL_SCAN: ${{ inputs.incremental }}

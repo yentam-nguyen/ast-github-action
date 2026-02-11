@@ -153,6 +153,11 @@ if [ -n "${APP_ID}" ]; then
   tag_list+=("app:${APP_ID}")
 fi
 
+# Add Team Name tag if provided
+if [ -n "${TEAM_NAME}" ]; then
+  tag_list+=("team:${TEAM_NAME}")
+fi
+
 # Combine all tags into final --tags parameter if there are any tags
 if [ ${#tag_list[@]} -gt 0 ]; then
   # Join array elements with comma
