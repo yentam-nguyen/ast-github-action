@@ -82,6 +82,10 @@ inputs:
     required: false
     description: 'Format for the output. One of [json json-v2 summaryHTML sarif sbom pdf markdown gl-sast gl-sca summaryConsole] (default "summaryConsole")'
     default: ''
+  break_build:
+    required: false
+    description: 'Break the build based on the scan results'
+    default: false
   incremental:
     required: false
     description: 'Trigger scan as incremental? (SAST)'
@@ -150,6 +154,7 @@ runs:
     ZIP_EXCLUDE: ${{ inputs.zip_exclude }}
     APP_ID: ${{ inputs.app }}
     BUG_TRACKER_FORMAT: ${{ inputs.bug_tracker }}
+    BREAK_BUILD: ${{ inputs.break_build }}
     INCREMENTAL_SCAN: ${{ inputs.incremental }}
     THRESHOLD: ${{ inputs.threshold }}
     DEBUG: ${{ inputs.debug }}
