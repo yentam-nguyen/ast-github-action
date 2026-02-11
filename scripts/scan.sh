@@ -127,14 +127,18 @@ fi
 
 # Prepare Zip Include filter if provided
 if [ -n "${ZIP_INCLUDE}" ]; then
+  # Remove backslashes
+  ZIP_INCLUDE="${ZIP_INCLUDE//\\/}"
   customized_scan_params+=("--file-include" "${ZIP_INCLUDE}")
 fi
 
 # Prepare Zip Exclude filter if provided
 # Convert the comma-separated list into the required format
 # e.g., pattern1,pattern2 -> !pattern1,!pattern2
-# or "*.log,!*.tmp,!*.cache" -> "!*.log,!*.tmp,!*.cache"
+# or "*\.log,!*\.tmp,!*\.cache" -> "!*.log,!*.tmp,!*.cache"
 if [ -n "${ZIP_EXCLUDE}" ]; then
+  # Remove backslashes
+  ZIP_EXCLUDE="${ZIP_EXCLUDE//\\/}"
   modified_exclude="${ZIP_EXCLUDE//,/,!}"
   modified_exclude="!${modified_exclude}"
   customized_scan_params+=("--file-filter" "${modified_exclude}")
