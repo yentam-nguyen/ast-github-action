@@ -175,7 +175,7 @@ if [ -n "${THRESHOLD}" ]; then
 else
   # Set minimum threshold if BREAK_BUILD is true
   if [ "${BREAK_BUILD}" = "true" ] || [ "${BREAK_BUILD}" = "True" ]; then
-    customized_scan_params+=("--threshold" "sast-high:1,sast-medium:1,sast-low:1")
+    customized_scan_params+=("--threshold" "sast-high:1;sast-medium:1;sast-low:1")
   fi
 fi
 
