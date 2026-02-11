@@ -8,12 +8,6 @@ inputs:
   cx_tenant:
     required: true
     description: 'Provide the Tenant for AST portal URL'
-  checkmarx_username:
-    required: false
-    description: '(DEPRECATED, use Client ID and Secret) Username for AST portal authentication'
-  checkmarx_password:
-    required: false
-    description: '(DEPRECATED, use Client ID and Secret) Password for AST portal authentication'
   checkmarx_client_id:
     required: true
     description: 'Client ID for AST portal authentication'
@@ -48,10 +42,6 @@ inputs:
     required: false
     default: ''
     description: 'Additional parameters for cx results show command only'
-  additional_params:
-    required: false
-    default: ''
-    description: '[DEPRECATED] Use scan_params instead. Additional parameters for AST scan'
   repo_name:
     required: false
     default:  ${{ github.event.repository.name }}
@@ -104,6 +94,17 @@ inputs:
     required: false
     description: 'Enable debug mode'
     default: false
+  ### DEPRECATED INPUTS - TO BE REMOVED IN FUTURE RELEASES ###
+  checkmarx_username:
+    required: false
+    description: '[DEPRECATED], use Client ID and Secret. Username for AST portal authentication'
+  checkmarx_password:
+    required: false
+    description: '[DEPRECATED], use Client ID and Secret. Password for AST portal authentication'
+  additional_params:
+    required: false
+    default: ''
+    description: '[DEPRECATED] Use scan_params instead. Additional parameters for AST scan'
   ######### Break Glass ##########
   break_glass_disable_cxflow:
     required: false
