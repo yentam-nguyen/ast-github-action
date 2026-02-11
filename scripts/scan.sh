@@ -184,6 +184,14 @@ if [ "${DEBUG}" = "true" ] || [ "${DEBUG}" = "True" ]; then
   customized_scan_params+=("--debug")
 fi
 
+# Add debug logs
+echo "Executing scan with the following parameters:"
+echo "  Project Name: ${PROJECT_NAME}"
+echo "  Source Directory: ${SOURCE_DIR}"
+echo "  Branch: ${BRANCH}"
+echo "  Customized Scan Params: ${customized_scan_params[@]}"
+echo "  Combined Scan Params: ${combined_scan_params[@]}"
+
 # Execute Scan
 /app/bin/cx scan create --project-name "${PROJECT_NAME}" -s "${SOURCE_DIR}" --branch "${BRANCH#refs/heads/}" --scan-info-format json --agent "Github Action" "${customized_scan_params[@]}" "${combined_scan_params[@]}" | tee -i "$output_file"
 exitCode=${PIPESTATUS[0]}
