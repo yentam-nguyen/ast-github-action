@@ -8,6 +8,12 @@ inputs:
   cx_tenant:
     required: true
     description: 'Provide the Tenant for AST portal URL'
+  checkmarx_username:
+    required: false
+    description: '(DEPRECATED, use Client ID and Secret) Username for AST portal authentication'
+  checkmarx_password:
+    required: false
+    description: '(DEPRECATED, use Client ID and Secret) Password for AST portal authentication'
   checkmarx_client_id:
     required: true
     description: 'Client ID for AST portal authentication'
