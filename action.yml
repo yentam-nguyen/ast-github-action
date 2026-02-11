@@ -8,6 +8,7 @@ inputs:
   cx_tenant:
     required: true
     description: 'Provide the Tenant for AST portal URL'
+    default: 'anzbank' # Add default tenant to support current cxflow users
   checkmarx_client_id:
     required: true
     description: 'Client ID for AST portal authentication'
