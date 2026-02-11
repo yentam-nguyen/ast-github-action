@@ -4,6 +4,10 @@
 # Logic: Parse Params and Run Scan
 # ------------------------------------------------------
 
+# ------------------------------------------------------
+# FUNCTION DEFINITIONS
+# ------------------------------------------------------
+
 # Function to extract and export repo-name parameter
 process_repo_name() {
   local params="$1"
@@ -71,7 +75,9 @@ remove_checkmarx_params() {
   echo "${params}"
 }
 
-### MAIN SCRIPT EXECUTION STARTS HERE
+# ------------------------------------------------------
+# MAIN SCRIPT EXECUTION STARTS HERE
+# ------------------------------------------------------
 
 # Parse global params (applied to all commands)
 if [ -n "${GLOBAL_PARAMS}" ]; then
@@ -85,6 +91,9 @@ if [ -n "${SCAN_PARAMS}" ]; then
   # Remove --namespace if present (no direct equivalent in AST CLI)
   SCAN_PARAMS=$(echo "${SCAN_PARAMS}" | sed 's/--namespace=[^[:space:]]*//g' | sed 's/  */ /g' | sed 's/^ *//;s/ *$//')
 
+  # Remove deprecated checkmarx.* parameters
+  SCAN_PARAMS=$(remove_checkmarx_params "${SCAN_PARAMS}")
+
   # Export --repo-name to environment variable for Checkmarx One (AST CLI) to pick up
   SCAN_PARAMS=$(process_repo_name "${SCAN_PARAMS}")
 
@@ -94,9 +103,6 @@ if [ -n "${SCAN_PARAMS}" ]; then
   # Convert cx-flow style parameters with --severity to --filter severity=<value>
   process_cx_flow_severity
 
-  # Remove deprecated checkmarx.* parameters
-  SCAN_PARAMS=$(remove_checkmarx_params "${SCAN_PARAMS}")
-  
   eval "scan_arr=(${SCAN_PARAMS})"
 else
   scan_arr=()
