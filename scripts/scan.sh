@@ -196,6 +196,13 @@ echo "  Combined Scan Params: ${combined_scan_params[@]}"
 /app/bin/cx scan create --project-name "${PROJECT_NAME}" -s "${SOURCE_DIR}" --branch "${BRANCH#refs/heads/}" --scan-info-format json --agent "Github Action" "${customized_scan_params[@]}" "${combined_scan_params[@]}" | tee -i "$output_file"
 exitCode=${PIPESTATUS[0]}
 
+# Retry if project exists error is encountered (exit code 1 with specific message)
+if [ $exitCode -eq 1 ] && grep -q "Failed creating a project: CODE: 208" "$output_file"; then
+  echo "Project with the same name already exists. Retrying scan creation..."
+  /app/bin/cx scan project --project-name "${PROJECT_NAME}" -s "${SOURCE_DIR}" --branch "${BRANCH#refs/heads/}" --scan-info-format json --agent "Github Action" "${customized_scan_params[@]}" "${combined_scan_params[@]}" | tee -i "$output_file"
+  exitCode=${PIPESTATUS[0]}
+fi
+
 # Extract Scan ID
 scanId=(`grep -E '"(ID)":"((\\"|[^"])*)"' "$output_file" | cut -d',' -f1 | cut -d':' -f2 | tr -d '"'`)
 
