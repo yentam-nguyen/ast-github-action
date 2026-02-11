@@ -11,6 +11,7 @@ inputs:
   checkmarx_client_id:
     required: true
     description: 'Client ID for AST portal authentication'
+    default: 'checkmarx-one-cli-client' # Add default client id to support current cxflow users
   checkmarx_client_secret: #cx_client_secret
     required: true
     description: 'Secret key for AST portal authentication'
