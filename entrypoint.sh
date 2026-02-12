@@ -4,6 +4,12 @@
 # Main Entrypoint Orchestrator
 # ------------------------------------------------------
 
+# 0. Check Break Glass
+if [ "${BREAK_GLASS_DISABLE_CXFLOW}" = true ]; then
+  echo "Scanning disabled - BREAK_GLASS_DISABLE_CXFLOW is set to true"
+  exit 0
+fi
+
 # 1. Setup Global Variables
 export output_file=./output.log
 echo "Server URL: $GITHUB_SERVER_URL"

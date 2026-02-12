@@ -2,19 +2,21 @@ name: 'Checkmarx AST Github Action'
 description: 'Simplify Checkmarx Scanning of source code along with Result consumption leveraging Checkmarx AST solution.'
 author: 'Checkmarx'
 inputs:
-  base_uri:
+  checkmarx_url: #base_uri
     required: true
     description: 'Provide the AST portal URL'
   cx_tenant:
     required: true
     description: 'Provide the Tenant for AST portal URL'
-  cx_client_id:
+    default: 'anzbank' # Add default tenant to support current cxflow users
+  checkmarx_client_id:
     required: true
     description: 'Client ID for AST portal authentication'
-  cx_client_secret:
+    default: 'checkmarx-one-cli-client' # Add default client id to support current cxflow users
+  checkmarx_client_secret: #cx_client_secret
     required: true
     description: 'Secret key for AST portal authentication'
-  project_name:
+  project: #project_name
     required: false
     default: ${{ github.repository }} # default repo name
     description: 'Select a Checkmarx Project Name'
@@ -30,7 +32,7 @@ inputs:
     required: false
     default: ''
     description: 'Global parameters applied to all cx commands'
-  scan_params:
+  params: #scan_params
     required: false
     default: ''
     description: 'Additional parameters for cx scan command only'
@@ -42,10 +44,6 @@ inputs:
     required: false
     default: ''
     description: 'Additional parameters for cx results show command only'
-  additional_params:
-    required: false
-    default: ''
-    description: '[DEPRECATED] Use scan_params instead. Additional parameters for AST scan'
   repo_name:
     required: false
     default:  ${{ github.event.repository.name }}
@@ -62,6 +60,64 @@ inputs:
     required: false
     default: .
     description: "Source directory"
+  scanner:
+    required: false
+    description: 'Specify the scanner to be used for the scan (sast,iac-security,sca,api-security)'
+    default: 'sast' # Add default scanner to support current cxflow users
+  zip_include:
+    required: false
+    description: 'Provide zip file include in regex format'
+    default: ''
+  zip_exclude:
+    required: false
+    description: 'Provide zip file EXCLUDE (NOT SCAN) in regex format'
+    default: ''
+  bug_tracker:
+    required: false
+    description: 'Format for the output. One of [json json-v2 summaryHTML sarif sbom pdf markdown gl-sast gl-sca summaryConsole] (default "summaryConsole")'
+    default: ''
+  break_build:
+    required: false
+    description: 'Break the build based on the scan results'
+    default: false
+  incremental:
+    required: false
+    description: 'Trigger scan as incremental? (SAST)'
+    default: false
+  threshold:
+    required: false
+    description: 'Set the vulnerability threshold for the scan. If the threshold is exceeded, the scan will be marked as failed. Format: "sast-high=1;sast-medium=10;sca-high=5;iac-security-low=10"'
+    default: ''
+  debug:
+    required: false
+    description: 'Enable debug mode'
+    default: false
+  ### Parameters for tagging the scan ###
+  app:
+    required: false
+    description: 'Unique Application Identifier used by downstream bug trackers (i.e. Jira)'
+    default: ''
+  team:
+    required: false
+    description: 'Team name to associate with the scan'
+    default: ''
+  ### DEPRECATED INPUTS - TO BE REMOVED IN FUTURE RELEASES ###
+  checkmarx_username:
+    required: false
+    description: '[DEPRECATED], use Client ID and Secret. Username for AST portal authentication'
+  checkmarx_password:
+    required: false
+    description: '[DEPRECATED], use Client ID and Secret. Password for AST portal authentication'
+  additional_params:
+    required: false
+    default: ''
+    description: '[DEPRECATED] Use scan_params instead. Additional parameters for AST scan'
+  ######### BREAK GLASS ##########
+  break_glass_disable_cxflow:
+    required: false
+    description: 'Set the default to true to disable cxflow'
+    default: false
+  
 outputs: 
   cxcli:
     description: output from cli
@@ -71,15 +127,15 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - ${{ inputs.base_uri }}
+    - ${{ inputs.checkmarx_url }}
     - ${{ inputs.cx_tenant }}
-    - ${{ inputs.cx_client_id }}
-    - ${{ inputs.cx_client_secret }}
+    - ${{ inputs.checkmarx_client_id }}
+    - ${{ inputs.checkmarx_client_secret }}
     - ${{ inputs.github_token }}
-    - ${{ inputs.project_name }}
+    - ${{ inputs.project }}
     - ${{ inputs.additional_params }}
     - ${{ inputs.global_params }}
-    - ${{ inputs.scan_params }}
+    - ${{ inputs.params }}
     - ${{ inputs.utils_params }}
     - ${{ inputs.results_params }}
     - ${{ inputs.repo_name }}
@@ -91,22 +147,33 @@ runs:
   post-entrypoint: '/app/cleanup.sh'
 
   env:
-    CX_BASE_URI: "${{ inputs.base_uri }}"
+    CX_BASE_URI: "${{ inputs.checkmarx_url }}"
     CX_TENANT: ${{ inputs.cx_tenant }}
-    CX_CLIENT_ID: ${{ inputs.cx_client_id }}
-    CX_CLIENT_SECRET: ${{ inputs.cx_client_secret }}
+    CX_CLIENT_ID: ${{ inputs.checkmarx_client_id }}
+    CX_CLIENT_SECRET: ${{ inputs.checkmarx_client_secret }}
     GITHUB_TOKEN: ${{ inputs.github_token }}
     BRANCH: ${{ inputs.branch }}
-    PROJECT_NAME: ${{ inputs.project_name }}
+    PROJECT_NAME: ${{ inputs.project }}
     ADDITIONAL_PARAMS: ${{ inputs.additional_params }}
     GLOBAL_PARAMS: ${{ inputs.global_params }}
-    SCAN_PARAMS: ${{ inputs.scan_params }}
+    SCAN_PARAMS: ${{ inputs.params }}
     UTILS_PARAMS: ${{ inputs.utils_params }}
     RESULTS_PARAMS: ${{ inputs.results_params }}
     REPO_NAME: ${{ inputs.repo_name }}
     NAMESPACE: ${{ inputs.namespace }}
     PR_NUMBER: ${{ inputs.pr_number }}
     SOURCE_DIR: ${{ inputs.source_dir }}
+    SCANNER: ${{ inputs.scanner }}
+    ZIP_INCLUDE: ${{ inputs.zip_include }}
+    ZIP_EXCLUDE: ${{ inputs.zip_exclude }}
+    APP_ID: ${{ inputs.app }}
+    TEAM_NAME: ${{ inputs.team }}
+    BUG_TRACKER_FORMAT: ${{ inputs.bug_tracker }}
+    BREAK_BUILD: ${{ inputs.break_build }}
+    INCREMENTAL_SCAN: ${{ inputs.incremental }}
+    THRESHOLD: ${{ inputs.threshold }}
+    DEBUG: ${{ inputs.debug }}
+    BREAK_GLASS_DISABLE_CXFLOW: ${{ inputs.break_glass_disable_cxflow }}
 branding:
   icon: 'check'
   color: 'green'

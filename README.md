@@ -56,6 +56,8 @@
 <!-- Overview -->
 # Overview
 
+This is the fork of the official Checkmarx One workflow.
+
 The **Checkmarx One** **GitHub Action** enables you to trigger Checkmarx One scans directly from the GitHub workflow. It provides a wrapper around the [Checkmarx One CLI Tool](https://checkmarx.com/resource/documents/en/34965-68620-checkmarx-one-cli-tool.html) which creates a zip archive from your source code repository and uploads it to Checkmarx One for scanning. The Github Action provides easy integration with GitHub while enabling scan customization using the full functionality and flexibility of the CLI tool.
 
 
